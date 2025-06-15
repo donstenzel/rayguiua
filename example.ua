@@ -3,14 +3,17 @@ I ~ "git: https://github.com/marcos-cat/iris"
 Gui ~ "lib"
 
 ~ {
-  Text ← "Input..."
+  Text ← "..."
 }
 
 New
 
-I~Open 400_500 "Testing"
+I~Open 120_65 "Testing"
 °I~Screen~FPS 60
 
+Gui~LoadStyle "style/lavanda.rgs"
+
 I~Loop!(
-  ⊃⍥&p⋅˜⍜Text◌ Gui~TextBox [10 10 100 20]⊸⊓Text(20 1)
+  ◌ Gui~Label [10 10 100 20] "Enter topic..."
+  ⊃⍥&p⋅˜⍜Text◌ Gui~Box~Text [10 35 100 20]⊸⊓Text(20 1)
 )

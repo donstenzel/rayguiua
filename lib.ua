@@ -11,6 +11,103 @@ Rg ← &ffi⊂□"bin/raygui.so"
 #   - [ ] enable / disable as inverses
 #   - [ ] pseudo properties like Style as getter / setter (un-by)
 # - [ ] add library path logic from rayua (and also libs for other platforms?? [how tho])
+# - [x] add all the enums (Gui*)
+#   - [x] State
+#   - [x] TextAlignment
+#   - [x] TextAlignmentVertical
+#   - [x] TextWrapMode
+#   - [x] Control
+#   - [x] ControlProperty
+#   - [x] DefaultProperty
+#   - [x] ToggleProperty
+#   - [x] SliderProperty
+#   - [x] ProgressBarProperty
+#   - [x] ScrollBarProperty
+#   - [x] CheckBoxProperty
+#   - [x] ComboBoxProperty
+#   - [x] DropdownBoxProperty
+#   - [x] TextBoxProperty
+#   - [x] ValueBoxProperty
+#   - [x] ListViewProperty
+#   - [x] ColorPickerProperty
+
+┌─╴State
+  |Normal
+  |Focused
+  |Pressed
+  |Disabled
+└─╴
+
+┌─╴Text
+  ┌─╴Align
+    |Left
+    |Center
+    |Right
+
+    ┌─╴Vertical
+      |Top
+      |Middle
+      |Bottom
+    └─╴
+  └─╴
+
+  ┌─╴Wrap
+    |None
+    |Char
+    |Word
+  └─╴
+└─╴
+
+┌─╴Control
+  |Default
+  |Label
+  |Button
+  |Toggle
+  |Slider
+  |ProgressBar
+  |CheckBox
+  |ComboBox
+  |DropdownBox
+  |TextBox
+  |ValueBox
+  |Control₁₁
+  |ListView
+  |ColorPicker
+  |ScrollBar
+  |StatusBar
+
+  # N → in normal state
+  # F → in focused state
+  # P → in pressed state
+  # D → in disabled state
+  ┌─╴Property
+    |BorderColorN
+    |BaseColorN
+    |TextColorN
+    |BorderColorF
+    |BaseColorF
+    |TextColorF
+    |BorderColorP
+    |BaseColorP
+    |TextColorP
+    |BorderColorD
+    |BaseColorD
+    |TextColorD
+    |BorderWidth
+    |TextPadding
+    |TextAlignment
+  └─╴
+
+  ┌─╴Default
+    TextSize              ← 16
+    TextSpacing           ← 17
+    LineColor             ← 18
+    BackgroundColor       ← 19
+    TextLineSpacing       ← 20
+    TextAlignmentVertical ← 21
+    TextWrapMode          ← 22
+  └─╴
+└─╴
 
 ┌─╴Ty
   → ↚ $"_*" # pointer, cause it points to the thing!
@@ -63,19 +160,22 @@ EnableTooltip  ← ◌ Rg {"void" "GuiEnableTooltip"} {}
 DisableTooltip ← ◌ Rg {"void" "GuiDisableTooltip"} {}
 SetTooltip     ← ◌ Rg Ty!{"void" "GuiSetTooltip" String} □₁
 
-# Gets the text with iconId prepended, if possible
-# text ? iconId text
-IconText ← Rg Ty!{String "GuiIconText" "int" String} □₂
+Icons ~ "icons.ua"
+┌─╴Icon
+  RawData ← (Rg Ty!{→"unsigned int" "GuiGetIcons"} {})
 
-SetIconScale ← ◌ Rg {"void" "GuiSetIconScale" "int"} □₁
+  SetScale ← ◌ Rg {"void" "GuiSetIconScale" "int"} □₁
 
-GetIcons ← (Rg Ty!{→"unsigned int" "GuiGetIcons"} {})
+  # Gets the text with iconId prepended, if possible
+  # text ? iconId text
+  Text ← Rg Ty!{String "GuiIconText" "int" String} □₂
 
-# icons ? file loadName
-LoadIcons ← Rg Ty!{→→"char" "GuiLoadIcons" String Bool} □₂
+  # icons ? file loadName
+  Load ← Rg Ty!{→→"char" "GuiLoadIcons" String Bool} □₂
 
-# ? iconId x y size color
-DrawIcon ← ◌ Rg Ty!{"void" "GuiDrawIcon" "int" "int" "int" "int" Color} □₅
+  # ? iconId x y size color
+  Draw ← ◌ Rg Ty!{"void" "GuiDrawIcon" "int" "int" "int" "int" Color} □₅
+└─╴
 
 # ? bounds title
 WindowBox ← Rg Ty!{"int" "GuiWindowBox" Rect String} □₂
@@ -92,56 +192,121 @@ Panel ← Rg Ty!{"int" "GuiPanel" Rect String} □₂
 # ? bounds tabNames active
 TabBar ← °□₂ Rg Ty!{"int" "GuiTabBar" Rect $"_:2" String "int" →"int"} □₃
 
-# ? bounds text content scroll view
-ScrollPanel ← °□₃ Rg Ty!{"int" "GuiScrollPanel" Rect String Rect →V₂ →Rect} □₅
+┌─╴ScrollPanel
+  # ? bounds text content scroll view
+  Call ← °□₃ Rg Ty!{"int" "GuiScrollPanel" Rect String Rect →V₂ →Rect} □₅
 
-# ? bounds text
+  ┌─╴P
+    ArrowSize     ← 16
+    ArrowVisible  ← 17
+    SliderPadding ← 18
+    SliderSize    ← 19
+    Padding       ← 20
+    Speed         ← 21
+  └─╴
+└─╴
+
+# state ? bounds text
 Label ← Rg Ty!{"int" "GuiLabel" Rect String} □₂
 
 # clicked ? bounds text
 Button ← Rg Ty!{"int" "GuiButton" Rect String} □₂
 
-# ? bounds text
+# clicked ? bounds text
 LabelButton ← Rg Ty!{"int" "GuiLabelButton" Rect String} □₂
 
-# clicked active ? bounds text active
-Toggle ← °□₂ Rg Ty!{"int" "GuiToggle" Rect String →Bool} □₃
+┌─╴Toggle
+  # clicked active ? bounds text active
+  Call ← °□₂ Rg Ty!{"int" "GuiToggle" Rect String →Bool} □₃
 
-# clicked active ? bounds text active
-ToggleGroup ← °□₂ Rg Ty!{"int" "GuiToggleGroup" Rect String →"int"} □₃
+  # clicked active ? bounds text active
+  Group ← °□₂ Rg Ty!{"int" "GuiToggleGroup" Rect String →"int"} □₃
 
-# clicked active ? bounds text active
-ToggleSlider ← °□₂ Rg Ty!{"int" "GuiToggleSlider" Rect String →"int"} □₃
+  # clicked active ? bounds text active
+  Slider ← °□₂ Rg Ty!{"int" "GuiToggleSlider" Rect String →"int"} □₃
 
-# clicked checked ? bounds text checked
-CheckBox ← °□₂ Rg Ty!{"int" "GuiCheckBox" Rect String →Bool} □₃
+  ┌─╴P
+    GroupPadding ← 16
+  └─╴
+└─╴
 
-# clicked active ? bounds text active
-ComboBox ← °□₂ Rg Ty!{"int" "GuiComboBox" Rect String →"int"} □₃
+┌─╴CheckBox
+  # clicked checked ? bounds text checked
+  Call ← °□₂ Rg Ty!{"int" "GuiCheckBox" Rect String →Bool} □₃
 
-# clicked new ? bounds text current editable
-DropdownBox ← °□₂ Rg Ty!{"int" "GuiComboBox" Rect String →"int" Bool} □₄
+  ┌─╴P
+    Padding ← 16
+  └─╴
+└─╴
 
-# clicked new ? bounds text current min max editable
-Spinner ← °□₂ Rg Ty!{"int" "GuiSpinner" Rect String →"int" "int" "int" Bool} □₆
+┌─╴ComboBox
+  # clicked active ? bounds text active
+  ComboBox ← °□₂ Rg Ty!{"int" "GuiComboBox" Rect String →"int"} □₃
 
-# clicked new ? bounds text current min max editable
-ValueBox ← °□₂ Rg Ty!{"int" "GuiValueBox" Rect String →"int" "int" "int" Bool} □₆
+  ┌─╴P
+    ButtonWidth   ← 16
+    ButtonSpacing ← 17
+  └─╴
+└─╴
 
-# clicked textValue new ? bounds text textValue current editable
-ValueBoxFloat ← °□₃ Rg Ty!{"int" "GuiValueBoxFloat" Rect String →"char" →"float" Bool} □₅
+┌─╴DropdownBox
+  # clicked new ? bounds text current editable
+  Call ← °□₂ Rg Ty!{"int" "GuiComboBox" Rect String →"int" Bool} □₄
 
-# return new ? bounds current textSize editable
-TextBox ← °□₂ Rg Ty!{"int" "GuiTextBox" Rect →"char" "int" Bool} □₄
+  ┌─╴P
+    Padding     ← 16
+    ItemSpacing ← 17
+    ArrowHidden ← 18
+    RollUp      ← 19
+  └─╴
+└─╴
 
-# clicked new ? bounds textLeft textRight current min max
-Slider ← °□₂ Rg Ty!{"int" "GuiSlider" Rect String String →"float" "float" "float"} □₆
+┌─╴Box
+  # return new ? bounds current maxLen editable
+  Text ← °□₂ Rg Ty!{"int" "GuiTextBox" Rect →"char" "int" Bool} □₄
 
-# clicked new ? bounds textLeft textRight current min max
-SliderBar ← °□₂ Rg Ty!{"int" "GuiSliderBar" Rect String String →"float" "float" "float"} □₆
+  ┌─╴Value
+    # clicked new ? bounds text current min max editable
+    Call ← °□₂ Rg Ty!{"int" "GuiValueBox" Rect String →"int" "int" "int" Bool} □₆
 
-# clicked new ? bounds textLeft textRight current min max
-ProgressBar ← °□₂ Rg Ty!{"int" "GuiProgressBar" Rect String String →"float" "float" "float"} □₆
+    # clicked textValue new ? bounds text textValue current editable
+    Float ← °□₃ Rg Ty!{"int" "GuiValueBoxFloat" Rect String →"char" →"float" Bool} □₅
+
+    ┌─╴P
+      ButtonWidth   ← 16
+      ButtonSpacing ← 17
+    └─╴
+  └─╴
+
+  # clicked new ? bounds text current min max editable
+  Spinner ← °□₂ Rg Ty!{"int" "GuiSpinner" Rect String →"int" "int" "int" Bool} □₆
+
+  ┌─╴P
+    ReadOnly ← 16
+  └─╴
+└─╴
+
+┌─╴Slider
+  # clicked new ? bounds textLeft textRight current min max
+  Call ← °□₂ Rg Ty!{"int" "GuiSlider" Rect String String →"float" "float" "float"} □₆
+
+  # clicked new ? bounds textLeft textRight current min max
+  Bar ← °□₂ Rg Ty!{"int" "GuiSliderBar" Rect String String →"float" "float" "float"} □₆
+
+  ┌─╴P
+    Width   ← 16
+    Padding ← 17
+  └─╴
+└─╴
+
+┌─╴ProgressBar
+  # clicked new ? bounds textLeft textRight current min max
+  Call ← °□₂ Rg Ty!{"int" "GuiProgressBar" Rect String String →"float" "float" "float"} □₆
+
+  ┌─╴P
+    Padding ← 16
+  └─╴
+└─╴
 
 # ? bounds text
 StatusBar ← Rg Ty!{"int" "GuiStatusBar" Rect String} □₂
@@ -152,32 +317,61 @@ DummyRec ← Rg Ty!{"int" "GuiDummyRec" Rect String} □₂
 # focused newCell ? bounds text spacing divisions currentCell
 Grid ← °□₂ Rg Ty!{"int" "GuiGrid" Rect String "float" "int" →V₂} □₅
 
-# focused newScroll newActive ? bounds text currentScroll currentActive
-ListView ← °□₃ Rg Ty!{"int" "GuiListView" Rect String →"int" →"int"} □₄
+┌─╴ListView
+  # focused newScroll newActive ? bounds text currentScroll currentActive
+  Call ← °□₃ Rg Ty!{"int" "GuiListView" Rect String →"int" →"int"} □₄
 
-# focused newScroll newActive newFocus ? bounds texts currentScroll currentActive currentFocus
-ListViewEx ← °□₄ Rg Ty!{"int" "GuiListViewEx" Rect $"_:2" String "int" →"int" →"int" →"int"} □₅
+  # focused newScroll newActive newFocus ? bounds texts currentScroll currentActive currentFocus
+  Extended ← °□₄ Rg Ty!{"int" "GuiListViewEx" Rect $"_:2" String "int" →"int" →"int" →"int"} □₅
 
-# pressed ? bounds title message buttons
-MessageBox ← Rg Ty!{"int" "GuiMessageBox" Rect String String String} □₄
+  ┌─╴P
+    ItemHeight      ← 16
+    ItemSpacing     ← 17
+    ScrollBarWidth  ← 18
+    ScrollBarSide   ← 19
+    ItemBorderN     ← 20 # 0 = left, 1 = right
+    ItemBorderWidth ← 21
+  └─╴
+└─╴
 
-# pressed new secret ? bounds title message buttons current maxSize secret
-TextInputBox ← °□₃ Rg Ty!{"int" "GuiTextInputBox" Rect String String String →"char" "int" →Bool} □₇
+┌─╴Popup
+  # pressed ? bounds title message buttons
+  Call ← Rg Ty!{"int" "GuiMessageBox" Rect String String String} □₄
 
-# picked new ? bounds text current
-ColorPicker ← °□₂ Rg Ty!{"int" "GuiColorPicker" Rect String →Color} □₃
+  # pressed new secret ? bounds title message buttons current maxSize secret
+  Input ← °□₃ Rg Ty!{"int" "GuiTextInputBox" Rect String String String →"char" "int" →Bool} □₇
+└─╴
 
-# picked new ? bounds text current
-ColorPanel ← °□₂ Rg Ty!{"int" "GuiColorPanel" Rect String →Color} □₃
+┌─╴Color
+  ┌─╴Picker
+    # picked new ? bounds text current
+    Call ← °□₂ Rg Ty!{"int" "GuiColorPicker" Rect String →Color} □₃
 
-# picked new ? bounds text current
-ColorBarAlpha ← °□₂ Rg Ty!{"int" "GuiColorBarAlpha" Rect String →"float"} □₃
+    # picked new ? bounds text current
+    HSV ← °□₂ Rg Ty!{"int" "GuiColorPickerHSV" Rect String →V₃} □₃
 
-# picked new ? bounds text current
-ColorBarHue ← °□₂ Rg Ty!{"int" "GuiColorBarHue" Rect String →"float"} □₃
+    ┌─╴P
+      SelectorSize     ← 16
+      HueBarWidth      ← 17
+      HueBarPadding    ← 18
+      SelectorHeight   ← 19
+      SelectorOverflow ← 20
+    └─╴
+  └─╴
 
-# picked new ? bounds text current
-ColorPickerHSV ← °□₂ Rg Ty!{"int" "GuiColorPickerHSV" Rect String →V₃} □₃
+  ┌─╴Panel
+    # picked new ? bounds text current
+    Call ← °□₂ Rg Ty!{"int" "GuiColorPanel" Rect String →Color} □₃
 
-# picked new ? bounds text current
-ColorPanelHSV ← °□₂ Rg Ty!{"int" "GuiColorPanelHSV" Rect String →V₃} □₃
+    # picked new ? bounds text current
+    HSV ← °□₂ Rg Ty!{"int" "GuiColorPanelHSV" Rect String →V₃} □₃
+  └─╴
+
+  ┌─╴Bar
+    # picked new ? bounds text current
+    Alpha ← °□₂ Rg Ty!{"int" "GuiColorBarAlpha" Rect String →"float"} □₃
+
+    # picked new ? bounds text current
+    Hue ← °□₂ Rg Ty!{"int" "GuiColorBarHue" Rect String →"float"} □₃
+  └─╴
+└─╴
